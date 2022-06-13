@@ -4,22 +4,33 @@ Views for the lti_params_api app.
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from xmodule.modulestore.django import modulestore
-from cms.djangoapps.contentstore.views.helpers import usage_key_with_run
-from cms.djangoapps.lti_params_api.serializers import LTIListParamSerializer
+from openedx.features.course_experience.utils import get_course_outline_block_tree
 
+from cms.djangoapps.contentstore.views.helpers import usage_key_with_run
+try:
+    from common.djangoapps.util.views import ensure_valid_course_key
+except ImportError:
+    from util.views import ensure_valid_course_key
 
 class LTIParams(APIView):
     """
     This class will handle API request and filter data.
     """
-    def get(self, request, usage_id):
+    @ensure_valid_course_key
+    def get(self, request, course_id):
+        lti_usage_keys = []
         lti_metadata = []
-        lti_metadata.append(self.get_block_data(usage_id))
 
+        course_block_tree = get_course_outline_block_tree(request, course_id)
 
-        lti_serialized_data = LTIListParamSerializer(lti_metadata, many=True)
-        return Response(lti_serialized_data.data)
+        for chapter in course_block_tree.get('children') or []:
+            for sequential in chapter.get('children') or []:
+                for vertical in sequential.get('children') or []:
+                    for component in vertical.get('children') or []:
+                        if component['type'] == 'lti_advantage_consumer':
+                            lti_usage_keys.append(component['id'])
 
+        return Response(lti_usage_keys)
 
     def get_block_data(self, usage_id):
         usage_key = usage_key_with_run(usage_id)
