@@ -2,11 +2,7 @@
 Serializers for use in the lti_params_api app.
 """
 
-import json
-
 from rest_framework import serializers
-
-from xmodule.modulestore.django import modulestore
 
 class LTIListParamSerializer(serializers.Serializer):
     """
