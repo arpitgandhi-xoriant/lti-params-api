@@ -3,7 +3,8 @@ Views for the lti_params_api app.
 """
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from openedx.features.course_experience.utils import get_course_outline_block_tree
+
+from .patch.course_experience_utils_custom import get_course_outline_block_tree
 from .utils import get_usage_ids, get_block_data
 
 from lms.djangoapps.lti_params_api.serializers import LTIListParamSerializer
@@ -15,7 +16,7 @@ class LTIParams(APIView):
     """
     @ensure_valid_course_key
     def get(self, request, course_id):
-        
+
         lti_metadata = []
 
         course_block_tree = get_course_outline_block_tree(request, course_id)
