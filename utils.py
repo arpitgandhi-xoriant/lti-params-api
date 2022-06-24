@@ -15,22 +15,27 @@ def get_usage_ids(course_block_tree):
             for vertical in sequential.get('children', []):
                 for component in vertical.get('children', []):
                     if component['type'] == 'lti_advantage_consumer':
-                        lti_usage_ids.append(component['id'])
+                        lti_usage_ids.append(
+                            {
+                                'component_id': component['id'],
+                                'display_name': vertical['display_name']
+                            }
+                        )
 
     return lti_usage_ids
 
-def get_block_data(usage_id):
+def get_block_data(usage_data):
     """
     This will return metadata of given LTI in dict format.
     """
-    usage_key = usage_key_with_run(usage_id)
+    usage_key = usage_key_with_run(usage_data.get('component_id'))
 
     module_store = modulestore()
     lti_info = module_store.get_item(usage_key)
 
     lti_info_dict = {}
-    lti_info_dict["block_key"] = usage_id
-    lti_info_dict["display_name"] = lti_info.get_parent().display_name
+    lti_info_dict["block_key"] = usage_data.get('component_id')
+    lti_info_dict["display_name"] = usage_data.get('display_name')
     lti_info_dict['launch_url'] = lti_info.launch_url
     lti_info_dict['tool_id'] = str(lti_info.tool_id)
     lti_info_dict['custom_parameters'] = lti_info.custom_parameters
