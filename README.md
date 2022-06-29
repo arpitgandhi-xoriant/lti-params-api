@@ -7,26 +7,25 @@ This app is to get params of Advantage LTIs.
 
 Install
 -------
-Clone app in cms/djangoapps:
+Clone app in your edx-platform:
 
-    git clone https://github.com/arpitgandhi-xoriant/lti_params_api.git
+    git clone https://github.com/arpitgandhi-xoriant/lti-params-api.git
     
-add app in cms/envs/common.py under "INSTALLED_APPS":
+Install app in your devstack:
 
-    "cms.djangoapps.lti_params_api"
+    pip install lti-params-api/
     
-Add url in cms/urls.py:
+Add url in lms/urls.py:
 
     urlpatterns += [
-        url(r'api/lti_params_api/', include('cms.djangoapps.lti_params_api.urls'))
+        url(r'api/lti_params_api/', include('lti_params_api.urls'))
     ]
 
 
-> Restart CMS
+> Restart LMS
 
     
 API Call
 ---
     
-    <studio_url>/api/lti_params_api/lti_params_list/<usage_key>
-
+    <lms_url>/api/lti_params_api/lti_params_list/?course_id=<encoded_course_id_string>
