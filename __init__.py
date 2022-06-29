@@ -1,3 +1,0 @@
-"""
-LTI Params API App
-"""
