@@ -13,7 +13,10 @@ log = logging.getLogger(__name__)
 
 
 @request_cached()
-def get_course_outline_block_tree(request, course_id, user=None, allow_start_dates_in_future=False):
+def get_course_outline_block_tree(request,
+                                  course_id,
+                                  user=None,
+                                  allow_start_dates_in_future=False):
     """
     Returns the root block of the course outline, with children as blocks.
 
@@ -30,8 +33,8 @@ def get_course_outline_block_tree(request, course_id, user=None, allow_start_dat
         Replace each child id with the full block for the child.
         Given a block, replaces each id in its children array with the full
         representation of that child, which will be looked up by id in the
-        passed all_blocks dict. Recursively do the same replacement for children
-        of those children.
+        passed all_blocks dict. Recursively do the same
+        replacement for children of those children.
         """
         children = block.get('children', [])
 
@@ -56,23 +59,31 @@ def get_course_outline_block_tree(request, course_id, user=None, allow_start_dat
         Walk course tree, marking block completion.
         Mark 'most recent completed block as 'resume_block'
         """
-        last_completed_child_position = BlockCompletion.get_latest_block_completed(user, course_key)
+        last_completed_child_position = BlockCompletion.\
+            get_latest_block_completed(
+                user, course_key
+            )
 
         if last_completed_child_position:
             # Mutex w/ NOT 'course_block_completions'
             recurse_mark_complete(
-                course_block_completions=BlockCompletion.get_learning_context_completions(user, course_key),
+                course_block_completions=BlockCompletion.
+                get_learning_context_completions(
+                    user, course_key
+                ),
                 latest_completion=last_completed_child_position,
                 block=block
             )
 
-    def recurse_mark_complete(course_block_completions, latest_completion, block):
+    def recurse_mark_complete(course_block_completions,
+                              latest_completion, block):
         """
         Helper function to walk course tree dict,
         marking blocks as 'complete' and 'last_complete'
         If all blocks are complete, mark parent block complete
         mark parent blocks of 'last_complete' as 'last_complete'
-        :param course_block_completions: dict[course_completion_object] =  completion_value
+        :param course_block_completions:
+            dict[course_completion_object] =  completion_value
         :param latest_completion: course_completion_object
         :param block: course_outline_root_block block object or child block
         :return:
@@ -105,29 +116,42 @@ def get_course_outline_block_tree(request, course_id, user=None, allow_start_dat
         Recursively marks the branch to the last accessed block.
         """
         block_key = block.serializer.instance
-        student_module_dict = get_student_module_as_dict(user, course_key, block_key)
+        student_module_dict = get_student_module_as_dict(
+            user, course_key, block_key
+        )
 
         last_accessed_child_position = student_module_dict.get('position')
         if last_accessed_child_position and block.get('children'):
             block['resume_block'] = True
             if last_accessed_child_position <= len(block['children']):
-                last_accessed_child_block = block['children'][last_accessed_child_position - 1]
+                last_accessed_child_block = \
+                    block['children'][last_accessed_child_position - 1]
                 last_accessed_child_block['resume_block'] = True
                 mark_last_accessed(user, course_key, last_accessed_child_block)
             else:
-                # We should be using an id in place of position for last accessed.
-                # However, while using position, if the child block is no longer accessible
+                # We should be using an id in place
+                # of position for last accessed.
+                # However, while using position,
+                # if the child block is no longer accessible
                 # we'll use the last child.
                 block['children'][-1]['resume_block'] = True
 
     def recurse_mark_scored(block):
         """
-        Mark this block as 'scored' if any of its descendents are 'scored' (that is, 'has_score' and 'weight' > 0).
+        Mark this block as 'scored' if any of its descendents
+        are 'scored' (that is, 'has_score' and 'weight' > 0).
         """
-        is_scored = block.get('has_score', False) and block.get('weight', 1) > 0
-        # Use a list comprehension to force the recursion over all children, rather than just stopping
+        is_scored = block.get('has_score', False)\
+            and block.get('weight', 1) > 0
+        # Use a list comprehension to force the recursion
+        # over all children, rather than just stopping
         # at the first child that is scored.
-        children_scored = any([recurse_mark_scored(child) for child in block.get('children', [])])
+        children_scored = any(
+            [
+                recurse_mark_scored(child)
+                for child in block.get('children', [])
+            ]
+        )
         if is_scored or children_scored:
             block['scored'] = True
             return True
@@ -137,7 +161,8 @@ def get_course_outline_block_tree(request, course_id, user=None, allow_start_dat
 
     def recurse_num_graded_problems(block):
         """
-        Marks each block with the number of graded and scored leaf blocks below it as 'num_graded_problems'
+        Marks each block with the number of graded and
+        scored leaf blocks below it as 'num_graded_problems'
         """
         is_scored = block.get('has_score') and block.get('weight', 1) > 0
         is_graded = block.get('graded')
@@ -145,20 +170,28 @@ def get_course_outline_block_tree(request, course_id, user=None, allow_start_dat
         is_graded_problem = is_scored and is_graded and is_countable
 
         num_graded_problems = 1 if is_graded_problem else 0
-        num_graded_problems += sum(recurse_num_graded_problems(child) for child in block.get('children', []))
+        num_graded_problems += sum(
+            recurse_num_graded_problems(child)
+            for child in block.get('children', [])
+        )
 
         block['num_graded_problems'] = num_graded_problems
         return num_graded_problems
 
     def recurse_mark_auth_denial(block):
         """
-        Mark this block as 'scored' if any of its descendents are 'scored' (that is, 'has_score' and 'weight' > 0).
+        Mark this block as 'scored' if any of its descendents
+        are 'scored' (that is, 'has_score' and 'weight' > 0).
         """
-        own_denial_reason = {block['authorization_denial_reason']} if 'authorization_denial_reason' in block else set()
-        # Use a list comprehension to force the recursion over all children, rather than just stopping
+        own_denial_reason = {
+            block['authorization_denial_reason']
+        } if 'authorization_denial_reason' in block else set()
+        # Use a list comprehension to force the recursion
+        # over all children, rather than just stopping
         # at the first child that is scored.
         child_denial_reasons = own_denial_reason.union(
-            *(recurse_mark_auth_denial(child) for child in block.get('children', []))
+            *(recurse_mark_auth_denial(child)
+                for child in block.get('children', []))
         )
         if child_denial_reasons:
             block['all_denial_reasons'] = child_denial_reasons
@@ -194,7 +227,8 @@ def get_course_outline_block_tree(request, course_id, user=None, allow_start_dat
         allow_start_dates_in_future=allow_start_dates_in_future,
     )
 
-    course_outline_root_block = all_blocks['blocks'].get(all_blocks['root'], None)
+    course_outline_root_block = all_blocks['blocks']\
+        .get(all_blocks['root'], None)
     if course_outline_root_block:
         populate_children(course_outline_root_block, all_blocks['blocks'])
         recurse_mark_scored(course_outline_root_block)

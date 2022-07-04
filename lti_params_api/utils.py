@@ -4,6 +4,7 @@ It will have helper methods for processing the LTI params.
 from cms.djangoapps.contentstore.views.helpers import usage_key_with_run
 from xmodule.modulestore.django import modulestore
 
+
 def get_usage_ids(course_block_tree):
     """
     This will return all the advanced LTI usage_id of the given course tree.
@@ -23,6 +24,7 @@ def get_usage_ids(course_block_tree):
                         )
 
     return lti_usage_ids
+
 
 def get_block_data(usage_data):
     """

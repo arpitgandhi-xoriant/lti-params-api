@@ -3,7 +3,7 @@ URL definitions for the lti_params_api app.
 """
 from django.urls import re_path
 
-from .views import LTIParams
+from lti_params_api.views import LTIParams
 
 
 urlpatterns = [
