@@ -12,8 +12,15 @@ class LTIParamsAPIConfig(AppConfig):
         'url_config': {
             'lms.djangoapp': {
                 'namespace': 'lti_params_api',
-                'regex': r'^api/lti_params_api/lti_params_list/',
+                'regex': r'',
                 'relative_path': 'urls',
+            },
+        },
+        'settings_config': {
+            'lms.djangoapp': {
+                'common': {
+                    'relative_path': 'settings.common',
+                },
             },
         }
     }

@@ -8,7 +8,7 @@ from lti_params_api.views import LTIParams
 
 urlpatterns = [
     re_path(
-        r'^lti_params_list/$',
+        r'^api/lti_params_api/lti_params_list/$',
         LTIParams.as_view(),
         name="get-lti-params-list"
     ),

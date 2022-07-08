@@ -1,7 +1,6 @@
 """
 It will have helper methods for processing the LTI params.
 """
-from cms.djangoapps.contentstore.views.helpers import usage_key_with_run
 from xmodule.modulestore.django import modulestore
 
 
@@ -30,6 +29,8 @@ def get_block_data(usage_data):
     """
     This will return metadata of given LTI in dict format.
     """
+    from cms.djangoapps.contentstore.views.helpers import usage_key_with_run
+
     usage_key = usage_key_with_run(usage_data.get('component_id'))
 
     module_store = modulestore()

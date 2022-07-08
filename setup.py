@@ -27,10 +27,7 @@ setup(
     entry_points={
         "lms.djangoapp": [
             "lti_params_api = lti_params_api.apps:LTIParamsAPIConfig"
-        ],
-        "tutor.plugin.v0": [
-            "lti-params-api = lti_params_api.tutor.plugin"
-        ],
+        ]
     },
     classifiers=[
         'Environment :: Web Environment',
