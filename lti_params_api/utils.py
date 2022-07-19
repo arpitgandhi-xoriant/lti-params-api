@@ -1,7 +1,7 @@
 """
 It will have helper methods for processing the LTI params.
 """
-from cms.djangoapps.contentstore.views.helpers import usage_key_with_run
+from opaque_keys.edx.keys import UsageKey
 from xmodule.modulestore.django import modulestore
 
 
@@ -47,3 +47,12 @@ def get_block_data(usage_data):
     lti_info_dict['send_username'] = lti_info.ask_to_send_username
 
     return lti_info_dict
+
+
+def usage_key_with_run(usage_key_string):
+    """
+    Converts usage_key_string to a UsageKey, adding a course run if necessary
+    """
+    usage_key = UsageKey.from_string(usage_key_string)
+    usage_key = usage_key.replace(course_key=modulestore().fill_in_run(usage_key.course_key))
+    return usage_key
