@@ -44,7 +44,6 @@ def get_block_data(usage_data):
     lti_info_dict['scored'] = lti_info.has_score
     lti_info_dict['send_email'] = lti_info.ask_to_send_email
     lti_info_dict['send_name'] = lti_info.ask_to_send_name
-    lti_info_dict['send_username'] = lti_info.ask_to_send_username
 
     return lti_info_dict
 
