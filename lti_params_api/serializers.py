@@ -18,4 +18,3 @@ class LTIListParamSerializer(serializers.Serializer):
     scored = serializers.BooleanField()
     send_email = serializers.BooleanField()
     send_name = serializers.BooleanField()
-    send_username = serializers.BooleanField()
