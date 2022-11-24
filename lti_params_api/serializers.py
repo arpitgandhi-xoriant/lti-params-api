@@ -10,8 +10,8 @@ class LTIListParamSerializer(serializers.Serializer):
     LTIListParamSerializer to serialize LTI data.
     """
 
-    display_name = serializers.CharField(max_length=None)
     block_key = serializers.CharField(max_length=None)
+    display_name = serializers.CharField(max_length=None)
     lti_display_name = serializers.CharField(max_length=None)
     launch_url = serializers.CharField(max_length=None)
     tool_id = serializers.CharField(max_length=12)
