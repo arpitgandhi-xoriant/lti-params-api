@@ -212,7 +212,6 @@ def get_course_outline_block_tree(request,
         requested_fields=[
             'children',
             'display_name',
-            'lti_display_name',
             'type',
             'start',
             'contains_gated_content',
