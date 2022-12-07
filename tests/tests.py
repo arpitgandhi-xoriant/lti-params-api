@@ -41,6 +41,7 @@ class TestLTIParams(ModuleStoreTestCase):
             custom_parameters=["course=i2cs", "version=7.1", "lang=en", "module=m0/", "app=sgp", "launch=adl"],
             has_score=True,
             launch_url='https://hub-qa.netacad.com/kernel/lti/launch?client_id=573080',
+            display_name='knowledge_check',
             tool_id=99
         )
 
@@ -60,10 +61,10 @@ class TestLTIParams(ModuleStoreTestCase):
         query_string = '/api/lti_params_api/lti_params_list/?course_id={0}'.format(self.course_id)
         response = client.get(query_string)
         data = response.data[0]
-
-        self.assertIn('i4x://edX/100/lti_advantage_consumer/lti_advantage_consumer_', data['block_key'])
+        self.assertEqual('i4x://edX/100/lti_advantage_consumer/knowledge_check', data['block_key'])
         self.assertEqual(data['display_name'], 'Télécharger et utiliser Cisco Packet Tracer')
         self.assertEqual(data['launch_url'], 'https://hub-qa.netacad.com/kernel/lti/launch?client_id=573080')
+        self.assertEqual(data['lti_display_name'], 'knowledge_check')
         self.assertEqual(data['tool_id'], '99')
         self.assertEqual(data['custom_parameters'], ["course=i2cs", "version=7.1", "lang=en", "module=m0/", "app=sgp", "launch=adl"])
         self.assertEqual(data['scored'], True)

@@ -12,6 +12,7 @@ class LTIListParamSerializer(serializers.Serializer):
 
     block_key = serializers.CharField(max_length=None)
     display_name = serializers.CharField(max_length=None)
+    lti_display_name = serializers.CharField(max_length=None)
     launch_url = serializers.CharField(max_length=None)
     tool_id = serializers.CharField(max_length=12)
     custom_parameters = serializers.ListField()
