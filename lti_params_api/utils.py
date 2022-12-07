@@ -38,6 +38,7 @@ def get_block_data(usage_data):
     lti_info_dict = {}
     lti_info_dict["block_key"] = usage_data.get('component_id')
     lti_info_dict["display_name"] = usage_data.get('display_name')
+    lti_info_dict["lti_display_name"] = lti_info.display_name
     lti_info_dict['launch_url'] = lti_info.launch_url
     lti_info_dict['tool_id'] = str(lti_info.tool_id)
     lti_info_dict['custom_parameters'] = lti_info.custom_parameters
